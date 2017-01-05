@@ -1,0 +1,54 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "value": "MDTest"
+    },
+    "location": {
+      "value": "westus"
+    },
+    "virtualMachineName": {
+      "value": "mymdvm"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_DS4_v2"
+    },
+    "adminUsername": {
+      "value": "jomit"
+    },
+    "adminPublicSSHKey": {
+      "value": ""
+    },
+    //"storageAccountName": {
+    //  "value": "mymdvmdiskslog"
+    //},
+    "virtualNetworkName": {
+      "value": "MDTest-vnet"
+    },
+    "networkInterfaceName": {
+      "value": "mymdvmnic"
+    },
+    "networkSecurityGroupName": {
+      "value": "Jumpbox-nsg"
+    },
+    "storageAccountType": {
+      "value": "Premium_LRS"
+    },
+    //"diagnosticsStorageAccountName": {
+    //  "value": "mymdvmdiaglog"
+    //},
+    //"diagnosticsStorageAccountType": {
+    //  "value": "Standard_LRS"
+    //},
+    "subnetName": {
+      "value": "frontend"
+    },
+    "publicIpAddressName": {
+      "value": "mymdvm-ip"
+    },
+    "publicIpAddressType": {
+      "value": "Dynamic"
+    }
+  }
+}

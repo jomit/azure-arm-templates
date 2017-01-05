@@ -1,0 +1,203 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "virtualMachineName": {
+      "type": "string"
+    },
+    "virtualMachineSize": {
+      "type": "string"
+    },
+    "adminUsername": {
+      "type": "string"
+    },
+    "adminPublicSSHKey": {
+      "type": "string"
+    },
+    //"storageAccountName": {
+    //  "type": "string"
+    //},
+    "virtualNetworkName": {
+      "type": "string"
+    },
+    "networkInterfaceName": {
+      "type": "string"
+    },
+    "networkSecurityGroupName": {
+      "type": "string"
+    },
+    "storageAccountType": {
+      "type": "string"
+    },
+    //"diagnosticsStorageAccountName": {
+    //  "type": "string"
+    //},
+    //"diagnosticsStorageAccountType": {
+    //  "type": "string"
+    //},
+    "subnetName": {
+      "type": "string"
+    },
+    "publicIpAddressName": {
+      "type": "string"
+    },
+    "publicIpAddressType": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "vnetId": "[resourceId(parameters('resourceGroupName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "computeResouresApiVersion": "2016-04-30-preview"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/disks",
+      "name": "myManagedDataDisk",
+      "apiVersion": "[variables('computeResouresApiVersion')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "creationData": {
+          "createOption": "Empty"
+        },
+        "accountType": "[parameters('storageAccountType')]",
+        "diskSizeGB": 1023
+      }
+    },
+    {
+      "name": "[parameters('virtualMachineName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "[variables('computeResouresApiVersion')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]",
+        "Microsoft.Compute/disks/myManagedDataDisk"
+        //"[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+       // "[concat('Microsoft.Storage/storageAccounts/', parameters('diagnosticsStorageAccountName'))]"
+      ],
+      "properties": {
+        "osProfile": {
+          "computerName": "[parameters('virtualMachineName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "true",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('adminPublicSSHKey')]"
+                }
+              ]
+            }
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "14.04.2-LTS",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[parameters('virtualMachineName')]",
+            "createOption": "fromImage"
+            //"vhd": {
+            //  "uri": "[concat(concat(reference(resourceId(parameters('resourceGroupName'), 'Microsoft.Storage/storageAccounts', concat(parameters('storageAccountName'))), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), parameters('virtualMachineName'), '20161222120100.vhd')]"
+            //}
+          },
+          "dataDisks": [
+            {
+              "lun": 1,
+              "name": "myManagedDataDisk",
+              "createOption": "attach",
+              "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', 'myManagedDataDisk')]"
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
+            }
+          ]
+        }
+        //"diagnosticsProfile": {
+        //  "bootDiagnostics": {
+        //    "enabled": true,
+        //    "storageUri": "[reference(resourceId(parameters('resourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('diagnosticsStorageAccountName')), '2015-06-15').primaryEndpoints['blob']]"
+        //  }
+        //}
+      }
+    },
+    //{
+    //  "name": "[parameters('storageAccountName')]",
+    //  "type": "Microsoft.Storage/storageAccounts",
+    //  "apiVersion": "2015-06-15",
+    //  "location": "[parameters('location')]",
+    //  "properties": {
+    //    "accountType": "[parameters('storageAccountType')]"
+    //  }
+    //},
+    //{
+    //  "name": "[parameters('diagnosticsStorageAccountName')]",
+    //  "type": "Microsoft.Storage/storageAccounts",
+    //  "apiVersion": "2015-06-15",
+    //  "location": "[parameters('location')]",
+    //  "properties": {
+    //    "accountType": "[parameters('diagnosticsStorageAccountType')]"
+    //  }
+    //},
+    {
+      "name": "[parameters('networkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2016-09-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              },
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIpAddress": {
+                "id": "[resourceId(parameters('resourceGroupName'),'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId(parameters('resourceGroupName'), 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+        }
+      }
+    },
+    {
+      "name": "[parameters('publicIpAddressName')]",
+      "type": "Microsoft.Network/publicIpAddresses",
+      "apiVersion": "2016-09-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
+      }
+    }
+  ],
+  "outputs": {
+    "adminUsername": {
+      "type": "string",
+      "value": "[parameters('adminUsername')]"
+    }
+  }
+}

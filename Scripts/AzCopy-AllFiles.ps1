@@ -1,0 +1,1 @@
+﻿AzCopy /Source:"C:\Users\jovagh\OneDrive\Backup\Photos\_pics for print" /Dest:https://myftpstorage.blob.core.windows.net/testdata /DestKey:pZwlx0ak6KIVzzSXVLYS1at4qAMrs7nQ/WrKH1L0xDBGqR8F4eVb0L6hA8Ukr4dot3Hkq0vbkyTXjUIo5qTHFQ== /S

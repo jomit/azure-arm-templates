@@ -1,0 +1,57 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "count": {
+      "value": 2
+    },
+    "location": {
+      "value": "westus"
+    },
+    "virtualMachineName": {
+      "value": "myvm-0"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_D2_v2"
+    },
+    "adminUsername": {
+      "value": "jomit"
+    },
+    "adminPassword": {
+      "value": ""
+    },
+    "storageAccountName": {
+      "value": "pocdisklog"
+    },
+    "virtualNetworkName": {
+      "value": "poc-vnet"
+    },
+    "networkInterfaceName": {
+      "value": "myvmnic99"
+    },
+    "networkSecurityGroupName": {
+      "value": "poc-nsg"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "diagnosticsStorageAccountName": {
+      "value": "pocdiaglog"
+    },
+    "diagnosticsStorageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "diagnosticsStorageAccountId": {
+      "value": "Microsoft.Storage/storageAccounts/pocdiagdata0"
+    },
+    "subnetName": {
+      "value": "backend"
+    },
+    "publicIpAddressName": {
+      "value": "myvm-ip"
+    },
+    "publicIpAddressType": {
+      "value": "Dynamic"
+    }
+  }
+}

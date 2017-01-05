@@ -1,0 +1,52 @@
+Check Drives
+-------------------------------------------------------------------
+lsblk
+
+lsblk -f
+
+df
+
+df -h
+
+Disk Perf Test 
+--------------------------------------------------------------------
+
+sudo dd if=/dev/zero of=/dev/sdb1 bs=4096 count=1000 oflag=direct
+sudo dd if=/dev/zero of=./dummy.bin bs=4096 count=1000 oflag=direct  (original)
+
+sudo dd if=/dev/zero of=/dev/sdc bs=1M count=1000 oflag=direct  (better perf with 1M)
+
+
+Attach Disk in Azure
+--------------------------------------------------------------------
+sudo grep SCSI /var/log/messages
+
+lsblk   (see new drive /dev/sdc)
+
+sudo fdisk /dev/sdc
+	- n p 1 <default> <default>
+	- p
+	- w
+
+lsblk   (see new drive /dev/sdc1)	
+
+sudo mkfs -t ext4 /dev/sdc1   (creating file system)
+
+sudo mkdir /datadrive
+
+sudo mount /dev/sdc1 -o barrier=0 /datadrive
+
+sudo -i blkid		(copy UUID of the new drive)
+
+sudo nano /etc/fstab   (add the UUID of the drive in the file)
+	- UUID=27626293-6a63-4b19-8e26-c64ee866f61d   /datadrive   ext4   defaults,nofail   0   0
+
+sudo umount /datadrive
+sudo mount /datadrive
+
+sudo chmod go+w /datadrive
+
+
+findmnt
+lsssci
+

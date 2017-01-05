@@ -1,0 +1,213 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "count": {
+      "type": "int"
+    },
+    "location": {
+      "type": "string"
+    },
+    "virtualMachineName": {
+      "type": "string"
+    },
+    "virtualMachineSize": {
+      "type": "string"
+    },
+    "adminUsername": {
+      "type": "string"
+    },
+    "adminPassword": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "virtualNetworkName": {
+      "type": "string"
+    },
+    "networkInterfaceName": {
+      "type": "string"
+    },
+    "networkSecurityGroupName": {
+      "type": "string"
+    },
+    "storageAccountType": {
+      "type": "string"
+    },
+    "diagnosticsStorageAccountName": {
+      "type": "string"
+    },
+    "diagnosticsStorageAccountId": {
+      "type": "string"
+    },
+    "diagnosticsStorageAccountType": {
+      "type": "string"
+    },
+    "subnetName": {
+      "type": "string"
+    },
+    "publicIpAddressName": {
+      "type": "string"
+    },
+    "publicIpAddressType": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "vnetId": "[resourceId('MyTemplates','Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('virtualMachineName'), copyIndex())]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2015-06-15",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "veldatacopy",
+        "count": "[parameters('count')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'), copyIndex())]",
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'), copyIndex())]",
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('diagnosticsStorageAccountName'), copyIndex())]"
+      ],
+      "properties": {
+        "osProfile": {
+          "computerName": "[parameters('virtualMachineName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "OpenLogic",
+            "offer": "CentOS",
+            "sku": "7.2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[parameters('virtualMachineName')]",
+            "createOption": "fromImage",
+            "vhd": {
+              "uri": "[concat(concat(reference(resourceId('MyTemplates', 'Microsoft.Storage/storageAccounts', concat(parameters('storageAccountName'), copyIndex())), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), parameters('virtualMachineName'), '20161222120100.vhd')]"
+            }
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('networkInterfaceName'),copyIndex()))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(resourceId('MyTemplates', 'Microsoft.Storage/storageAccounts', concat(parameters('diagnosticsStorageAccountName'), copyIndex())), '2015-06-15').primaryEndpoints['blob']]"
+          }
+        }
+      }
+    },
+    //This is to enable the OS logging
+    //{
+    //     "name": "[concat(parameters('virtualMachineName'),'/', variables('diagnosticsExtensionName'))]",
+    //     "type": "Microsoft.Compute/virtualMachines/extensions",
+    //     "apiVersion": "2015-06-15",
+    //     "location": "[parameters('location')]",
+    //     "dependsOn": [
+    //         "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+    //     ],
+    //     "properties": {
+    //         "publisher": "Microsoft.OSTCExtensions",
+    //         "type": "LinuxDiagnostic",
+    //         "typeHandlerVersion": "2.3",
+    //         "autoUpgradeMinorVersion": true,
+    //         "settings": {
+    //             "StorageAccount": "[parameters('diagnosticsStorageAccountName')]",
+    //             "xmlCfg": "[base64(variables('wadcfgx'))]"
+    //         },
+    //         "protectedSettings": {
+    //             "storageAccountName": "[parameters('diagnosticsStorageAccountName')]",
+    //             "storageAccountKey": "[listKeys(parameters('diagnosticsStorageAccountId'),'2015-06-15').key1]",
+    //             "storageAccountEndPoint": "https://core.windows.net/"
+    //         }
+    //     }
+    // },
+    {
+      "name": "[concat(parameters('storageAccountName'), copyIndex())]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2015-06-15",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "datastoragecopy",
+        "count": "[parameters('count')]"
+      },
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('diagnosticsStorageAccountName'), copyIndex())]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2015-06-15",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "daignosticstoragecopy",
+        "count": "[parameters('count')]"
+      },
+      "properties": {
+        "accountType": "[parameters('diagnosticsStorageAccountType')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('networkInterfaceName'), copyIndex())]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2016-09-01",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "networkinterfacecopy",
+        "count": "[parameters('count')]"
+      },
+      "dependsOn": [],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              },
+              "privateIPAllocationMethod": "Dynamic"
+              // "publicIpAddress": {
+              //   "id": "[resourceId('MyTemplates','Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+              // }
+            }
+          }
+        ]
+        //"networkSecurityGroup": {
+        //  "id": "[resourceId('MyTemplates', 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+        //}
+      }
+    }
+    //{
+    //  "name": "[parameters('publicIpAddressName')]",
+    //"type": "Microsoft.Network/publicIpAddresses",
+    //   "apiVersion": "2016-09-01",
+    //   "location": "[parameters('location')]",
+    //   "properties": {
+    //       "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
+    //   }
+    //}
+  ],
+  "outputs": {
+    "adminUsername": {
+      "type": "string",
+      "value": "[parameters('adminUsername')]"
+    }
+  }
+}

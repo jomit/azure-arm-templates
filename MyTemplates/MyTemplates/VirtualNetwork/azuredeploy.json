@@ -1,0 +1,89 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkName": {
+      "type": "string"
+    },
+    "virtualNetworkAddressSpace": {
+      "type": "string"
+    },
+    "dataTeamSubnetName": {
+      "type": "string"
+    },
+    "dataTeamSubnetAddress": {
+      "type": "string"
+    },
+    "logTeamSubnetName": {
+      "type": "string"
+    },
+    "logTeamSubnetAddress": {
+      "type": "string"
+    },
+    "networkSecurityGroupName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[parameters('virtualNetworkName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "[parameters('virtualNetworkName')]"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('virtualNetworkAddressSpace')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('dataTeamSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('dataTeamSubnetAddress')]"
+            }
+          },
+          {
+            "name": "[parameters('logTeamSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('logTeamSubnetAddress')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('networkSecurityGroupName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-ssh",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "22",
+              "direction": "Inbound",
+              "priority": 1000,
+              "protocol": "Tcp",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*"
+            }
+          }
+        ]
+      },
+      "resources": [],
+      "dependsOn": []
+    }
+  ],
+  "outputs": {
+  }
+}

@@ -1,0 +1,54 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westus"
+    },
+    "virtualMachineName": {
+      "value": "myjumpbox"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_D2_v2"
+    },
+    "adminUsername": {
+      "value": "jomit"
+    },
+    "adminPublicSSHKey": {
+      "value": ""
+    },
+    "storageAccountName": {
+      "value": "jumpboxdiskslog"
+    },
+    "virtualNetworkName": {
+      "value": "poc-vnet"
+    },
+    "networkInterfaceName": {
+      "value": "jumpboxnic"
+    },
+    "networkSecurityGroupName": {
+      "value": "poc-nsg"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "diagnosticsStorageAccountName": {
+      "value": "jumpboxdiaglog"
+    },
+    "diagnosticsStorageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "diagnosticsStorageAccountId": {
+      "value": "Microsoft.Storage/storageAccounts/jumpboxdiagdata"
+    },
+    "subnetName": {
+      "value": "frontend"
+    },
+    "publicIpAddressName": {
+      "value": "jumpbox-ip"
+    },
+    "publicIpAddressType": {
+      "value": "Dynamic"
+    }
+  }
+}

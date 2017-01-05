@@ -1,0 +1,107 @@
+[Kubernetes on Azure] (https://github.com/colemickens/azure-kubernetes-status)
+======================================================
+
+Setup using [azkube] (https://github.com/colemickens/azkube/blob/master/README.md)
+----------------------------------------------
+
+$ docker run -it \
+    colemickens/azkube:latest /opt/azkube/azkube \
+		--auth-method="client_secret" \
+        --tenant-id="<>" \
+        --subscription-id="d0c802cd-23ce-4323-a183-5f6d9a84743e" \
+		--client-id="<>" \
+		--client-secret="<secret>" \
+		deploy
+		
+		
+kubernetes everywhere
+=====================================
+$ sudo apt-get install jq
+$ sudo apt-get install node
+$ sudo apt-get install npm
+
+$ sudo npm cache clean -f
+$ sudo npm install -g n
+$ sudo n stable
+
+$ sudo ln -sf /usr/local/n/versions/node/6.4.0/bin/node /usr/bin/node 
+
+$ npm install azure-cli -g
+
+$ wget https://raw.githubusercontent.com/kubernetes/kubernetes-anywhere/master/phase1/azure/create-azure-service-principal.sh -O ./create-azure-service-principal.sh
+$ chmod +x ./create-azure-service-principal.sh
+$ ./create-azure-service-principal.sh
+
+
+appname : jomitkubernetes
+signonurl : http://jomit-kubernetes
+client_id : 8d8c5473-85e1-41c0-9c3e-f2a3b4ecfe34
+secret	  : ZqcYa8h4QLtrpddr0w63KK7CHRLU6KAbN+aYYLCWfSw=
+
+
+
+* phase1.azure.tenant_id = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+* phase1.azure.subscription_id = "d0c802cd-23ce-4323-a183-5f6d9a84743e"
+* phase1.azure.client_id = "8d8c5473-85e1-41c0-9c3e-f2a3b4ecfe34"
+* phase1.azure.client_secret = "ZqcYa8h4QLtrpddr0w63KK7CHRLU6KAbN+aYYLCWfSw="
+
+* phase2.installer_container = "docker.io/colemickens/k8s-ignition:latest
+* phase2.docker_registry = "gcr.io/google_containers"
+* phase2.kubernetes_version = "v1.4.0-alpha.2"
+
+
+jack8s
+jomit
+
+
+Install kubectl
+=====================================
+
+$ curl -sSL https://sdk.cloud.google.com | bash -
+$ exec -l $SHELL
+$ gcloud init
+$ gcloud components list
+$ gcloud components install kubectl
+$ gcloud components list
+
+
+$ export KUBECONFIG=$HOME/.kube/config
+
+$ kubectl expose deployment nginx --port=8080 --name=nginx --type=LoadBalancer
+
+$ kubectl get service nginx
+
+$ kubectl cluster-info
+$ kubectl get svc
+$ kubectl get svc --namespace=kube-system
+
+
+
+http://13.66.231.52:8001/	(master vm ip)
+
+http://13.66.228.253:8001/	(load balancer)
+
+http://40.112.215.193:8001/
+ubuntutest.westus.cloudapp.azure.com
+
+
+Docker Install
+============================================
+kernel version should be >= 3.10
+
+$ uname -r
+
+https://docs.docker.com/engine/installation/linux/ubuntulinux/
+
+Or use the docker extension ?
+
+
+
+
+
+
+
+
+
+
+

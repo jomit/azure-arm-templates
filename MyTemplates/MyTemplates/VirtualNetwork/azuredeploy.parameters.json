@@ -1,0 +1,27 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkName": {
+      "value": "poc-vnet"
+    },
+    "virtualNetworkAddressSpace": {
+      "value": "172.192.0.0/16"
+    },
+    "dataTeamSubnetName": {
+      "value": "frontend"
+    },
+    "dataTeamSubnetAddress": {
+      "value": "172.192.1.0/24"
+    },
+    "logTeamSubnetName": {
+      "value": "backend"
+    },
+    "logTeamSubnetAddress": {
+      "value": "172.192.2.0/24"
+    },
+    "networkSecurityGroupName": {
+      "value": "poc-nsg"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "aadClientID": {
+      "value": "b6df940f-a8d4-40d2-a70e-50e1487b23a5"
+    },
+    "aadClientSecret": {
+      "value": "5a00a199-dfee-474c-8bca-edafad2cb10d"
+    },
+    "diskFormatQuery": {
+      "value": ""
+    },
+    "keyEncryptionKeyURL": {
+      "value": ""
+    },
+    "keyVaultName": {
+      "value": "linuxvmvault"
+    },
+    "keyVaultResourceGroup": {
+      "value": "AllVaults"
+    },
+    "passphrase": {
+      "value": ""
+    },
+    "sequenceVersion": {
+      "value": "1"
+    },
+    "useExistingKek": {
+      "value": "nokek"
+    },
+    "vmName": {
+      "value": "rhelvm"
+    }
+  }
+}
